@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+@import '../node_modules/spectre.css/src/spectre.scss';
+@import '../node_modules/spectre.css/src/spectre-exp.scss';
+@import '../node_modules/spectre.css/src/spectre-icons.scss';
+
+* {
+  box-sizing: border-box;
+}
+body {
+  padding:16px;
+
+  margin: auto;
+  max-width: 1024px;
+}

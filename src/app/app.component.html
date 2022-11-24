@@ -1,0 +1,226 @@
+<h1>ngx-load</h1>
+<p>
+  <code>*ngxLoad</code> is a structural directive that works a bit like
+  combining <code>*ngIf</code> with the <code>| async</code>-Pipe and providing
+  some advanced features along the way.
+</p>
+<h2>States</h2>
+A variable holding an observable can be in serveral states:
+<ul>
+  <li><b>idle</b>: <code>observable$</code> is not set</li>
+  <li>
+    <b>pending</b>: <code>observable$</code> is set, but has not emitted a value
+    yet
+  </li>
+  <li>
+    <b>empty</b>: <code>observable$</code> is set, has emitted a value, but the
+    value was empty (something like 0, '', [], {{'{'}}})
+  </li>
+  <li>
+    <b>value</b>: <code>observable$</code> is set, and has emitted a value
+  </li>
+  <li>
+    <b>error</b>: <code>observable$</code> is set, and has thrown an error
+  </li>
+  <li><b>complete</b>: <code>observable$</code> is set, and has completed</li>
+</ul>
+<h2>Usage</h2>
+
+<h3>Minimal example</h3>
+<pre
+  class="code"
+  data-lang="HTML"
+><code>&lt;div *ngxLoad="observable$; let content"&gt;
+  value: {{ '{{ content }}' }}
+&lt;/div&gt;
+</code></pre>
+For comparision using <code>*ngIf</code>:
+<pre
+  class="code"
+  data-lang="HTML"
+><code>&lt;div *ngIf="observable$ | async as content"&gt;
+  value: {{ '{{ content }}' }}
+&lt;/div&gt;
+</code></pre>
+<h3>Complete example</h3>
+When more templates are provided, more states will be displayed differently.
+<pre
+  class="code"
+  data-lang="HTML"
+><code>&lt;div *ngxLoad="observable$;  empty: emptyTemplate; error: errorTemplate;  idle: idleTemplate;  pending: pendingTemplate; complete: completeTemplate; let content" &gt;
+  value: {{ '{{ content }}' }}
+&lt;/div&gt;
+
+&lt;ng-template #emptyTemplate&gt;
+  empty
+&lt;/ng-template&gt;
+&lt;ng-template #errorTemplate let-content&gt;
+  error: {{ '{{ content }}' }}
+&lt;/ng-template&gt;
+&lt;ng-template #completeTemplate&gt;
+  complete
+&lt;/ng-template&gt;
+&lt;ng-template #idleTemplate&gt;
+  idle
+&lt;/ng-template&gt;
+&lt;ng-template #pendingTemplate&gt;
+  pending
+&lt;/ng-template&gt;
+</code></pre>
+Check out the interactive example below to get a feel for what is possible.
+<h2>Interactive example</h2>
+<p>
+  Control the value and the state of the variable
+  <code>observable$</code> with the following buttons.
+</p>
+<li>
+  <button class="btn" (click)="idle()">
+    <code>observable$ = null</code>
+    <b> idle</b>
+  </button>
+</li>
+<li>
+  <button class="btn" (click)="pending()">
+    <code>observable$ = new Subject()</code><b> pending</b>
+  </button>
+</li>
+<li>
+  <button class="btn" (click)="empty()" [disabled]="observable$ === null">
+    <code>observable.next(0)</code>
+    <b> empty</b>
+  </button>
+</li>
+<li>
+  <button class="btn" (click)="value()" [disabled]="observable$ === null">
+    <code>observable$.next(Math.random())</code>
+    <b> value</b>
+  </button>
+</li>
+<li>
+  <button class="btn" (click)="error()" [disabled]="observable$ === null">
+    <code>observable$.error("An error occured")</code>
+    <b> error</b>
+  </button>
+</li>
+<li>
+  <button
+    class="btn"
+    (click)="observable$?.complete()"
+    [disabled]="observable$ === null"
+  >
+    <code>observable$.complete()</code>
+    <b>complete </b>
+  </button>
+</li>
+<br />
+<div class="container">
+  <div class="columns">
+    <div class="column col-4 col-md-12">
+      <h4>Complete example</h4>
+      <p>
+        This should use a different template for each state
+      </p>
+
+      <div class="card">
+        <div class="card-body">
+          <ng-container
+            *ngxLoad="observable$; empty: emptyTemplate; error: errorTemplate; idle: idleTemplate;pending: pendingTemplate; complete: completeTemplate; let content"
+          >
+            <p><b>value</b> Template</p>
+            <p>
+              value: {{ content }}
+            </p>
+            <p>
+              <b>HINT:</b> <code>observable$</code> has emitted an value. Emit
+              another (empty) value, throw an error or complete the subject
+            </p>
+            <p></p>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="column col-4 col-md-12">
+      <h4>Minimal example</h4>
+      <p>
+        This only uses the <b>value</b> template. Some states (<b>idle</b>,
+        <b>pending</b>, <b>error</b>) will not display a template at all.
+        <b>empty</b> will just use the <b>value</b> template.
+        <b>complete</b> will be ignored (i.e. the template that was active
+        before, will still be displayed).
+      </p>
+      <div class="card">
+        <div class="card-body">
+          <div *ngxLoad="observable$; let content">
+            value: {{ content }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column col-4 col-md-12">
+      <h4>*ngIf example</h4>
+      <p>
+        For comparision with the minimal example, here is what the solution with
+        <code>*ngIf</code> and the <code>async</code>-Pipe does. Main
+        differences are, that this will not display empty values and in case of
+        errors the template won't change (while the minimal example is hidden).
+      </p>
+      <div class="card">
+        <div class="card-body">
+          <div *ngIf="observable$ | async as content">
+            value: {{ content }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #emptyTemplate>
+  <p><b>empty</b> Template</p>
+  <div class="empty">
+    <div class="empty-icon">
+      <i class="icon icon-people"></i>
+    </div>
+    <p class="empty-title h5">Your observable didn't contain a value</p>
+  </div>
+  <p>
+    <b>HINT:</b> <code>observable$</code> has emitted an empty value. Emit a
+    real value, throw an error or complete the subject
+  </p>
+</ng-template>
+
+<ng-template #errorTemplate let-content>
+  <p><b>error</b> Template</p>
+  <p>
+    error: {{ content }}
+  </p>
+  <p>
+    <b>HINT:</b> <code>observable$</code> has thrown an error and will no longer
+    emit anything. Set the observable back to null or create a new ReplaySubject
+    to continue
+  </p>
+</ng-template>
+
+<ng-template #completeTemplate>
+  <p><b>complete</b> Template</p>
+  <p>
+    <b>HINT:</b> <code>observable$</code> has completed. Nothing more to do. Set
+    the observable back to null or create a new ReplaySubject
+  </p>
+</ng-template>
+
+<ng-template #idleTemplate>
+  <p><b>idle</b> Template</p>
+  <p>
+    <b>HINT:</b> <code>observable$</code> is currently not set. Try setting the
+    <code>observable$</code> to a new ReplaySubject
+  </p>
+</ng-template>
+
+<ng-template #pendingTemplate>
+  <p><b>pending</b> Template</p>
+  <div class="loading loading-lg"></div>
+  <p>
+    <b>HINT:</b> Typically your application is now waiting for the observable to
+    emit a value. Try one of the next() methods or throw an error
+  </p>
+</ng-template>
