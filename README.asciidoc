@@ -3,7 +3,7 @@
 `*ngxLoad` is a structural directive that works a bit like combining `*ngIf` with the `async`-Pipe and providing some advanced features along the way.
 
 == Demo
-Try the Demo https://elefantling.github.io/ngx-load[here].
+Try the Demo https://elefantling.github.io/ngx-load#demo[here].
 
 == States
 
