@@ -1,6 +1,8 @@
 # ngx-load
 `*ngxLoad` is a structural directive that works a bit like combining `*ngIf` with the `async`-Pipe and providing some advanced features along the way.
 
+## Demo
+Try the Demo at [here](https://elefantling.github.io/ngx-load).
 ## States
 A variable holding an observable can be in serveral states:
 - **idle**: `observable$` is not set
